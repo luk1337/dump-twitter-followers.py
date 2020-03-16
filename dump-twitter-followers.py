@@ -19,11 +19,18 @@ def get_followers(user_id: int, cursor: int = -1):
     return data
 
 
+def get_user(screen_name: str):
+    url = f'https://api.twitter.com/1.1/users/show.json?screen_name={screen_name}'
+    data = json.loads(requests.get(url, headers=REQUEST_HEADERS).content)
+
+    return data
+
+
 if __name__ == '__main__':
     if len(sys.argv) != 2:
-        sys.exit(f'usage: {sys.argv[0]} [user_id]')
+        sys.exit(f'usage: {sys.argv[0]} [screen_name]')
 
-    # btw you can get user_id from http://gettwitterid.com
-    _, user_id = sys.argv
+    _, screen_name = sys.argv
 
-    get_followers(user_id)
+    user = get_user(screen_name)
+    get_followers(user['id'])
