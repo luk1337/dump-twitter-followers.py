@@ -1,0 +1,6 @@
+# extract these using your favorite browser's dev tools.
+REQUEST_HEADERS = {
+    'x-csrf-token': '',
+    'authorization': '',
+    'cookie': '',
+}
