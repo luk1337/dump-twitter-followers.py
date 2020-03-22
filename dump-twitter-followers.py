@@ -7,7 +7,7 @@ from config import *
 
 
 def get_followers(user_id: int, cursor: int = -1):
-    url = f'https://api.twitter.com/1.1/friends/list.json?include_profile_interstitial_type=1&include_blocking=1&include_blocked_by=1&include_followed_by=1&include_want_retweets=1&include_mute_edge=1&include_can_dm=1&include_can_media_tag=1&skip_status=1&cursor={cursor}&user_id={user_id}&count=20'
+    url = f'https://api.twitter.com/1.1/friends/list.json?user_id={user_id}&cursor={cursor}'
     data = json.loads(requests.get(url, headers=REQUEST_HEADERS).content)
 
     for user in data['users']:
