@@ -6,17 +6,22 @@ import sys
 from config import *
 
 
-def get_followers(user_id: int, cursor: int = -1):
-    url = f'https://api.twitter.com/1.1/friends/list.json?user_id={user_id}&cursor={cursor}'
-    data = json.loads(requests.get(url, headers=REQUEST_HEADERS).content)
+def get_followers(user_id: int):
+    cursor = -1
+    followers = []
 
-    for user in data['users']:
-        print(f'https://twitter.com/{user["screen_name"]}')
+    while True:
+        url = f'https://api.twitter.com/1.1/friends/list.json?user_id={user_id}&cursor={cursor}'
+        data = json.loads(requests.get(url, headers=REQUEST_HEADERS).content)
 
-    if data['next_cursor'] != 0:
-        get_followers(user_id, data['next_cursor'])
+        followers.append(data)
 
-    return data
+        if data['next_cursor'] == 0:
+            break
+
+        cursor = data['next_cursor']
+
+    return followers
 
 
 def get_user(screen_name: str):
@@ -33,4 +38,8 @@ if __name__ == '__main__':
     _, screen_name = sys.argv
 
     user = get_user(screen_name)
-    get_followers(user['id'])
+    followers = get_followers(user['id'])
+
+    for data in followers:
+        for user in data["users"]:
+            print(f'https://twitter.com/{user["screen_name"]}')
