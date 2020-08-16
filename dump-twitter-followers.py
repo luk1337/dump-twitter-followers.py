@@ -29,10 +29,9 @@ def get_followers(user_id: str):
         url = f'https://api.twitter.com/graphql/0LTpnyHIBKX5Y8YvYJkvvg/Following?{get}'
         data = json.loads(requests.get(url, headers=REQUEST_HEADERS).content)
 
-        followers.append(data)
-
         for instruction in data['data']['user']['following_timeline']['timeline']['instructions']:
             if instruction['type'] == 'TimelineAddEntries':
+                followers += instruction['entries'][:-2]
                 cursor = instruction['entries'][-2]['content']['value']
 
                 if cursor == '0|0':
@@ -61,13 +60,5 @@ if __name__ == '__main__':
     user = get_user(screen_name)
     followers = get_followers(str(user['id']))
 
-    for data in followers:
-        for instruction in data['data']['user']['following_timeline']['timeline']['instructions']:
-            if instruction['type'] != 'TimelineAddEntries':
-                continue
-
-            for entry in instruction['entries']:
-                if entry['content']['entryType'] != 'TimelineTimelineItem':
-                    continue
-
-                print(f'https://twitter.com/{entry["content"]["itemContent"]["user"]["legacy"]["screen_name"]}')
+    for entry in followers:
+        print(f'https://twitter.com/{entry["content"]["itemContent"]["user"]["legacy"]["screen_name"]}')
