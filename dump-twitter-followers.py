@@ -12,20 +12,16 @@ def get_followers(user_id: str):
     followers = []
 
     while True:
-        variables = {
+        get = urllib.parse.urlencode({'variables': json.dumps({
             'userId': user_id,
             'count': 200,
+            'cursor': cursor,
             'withHighlightedLabel': False,
             'withTweetQuoteCount': False,
             'includePromotedContent': False,
             'withTweetResult': False,
             'withUserResult': False,
-        }
-
-        if cursor is not None:
-            variables['cursor'] = cursor
-
-        get = urllib.parse.urlencode({'variables': json.dumps(variables)})
+        })})
         url = f'https://api.twitter.com/graphql/0LTpnyHIBKX5Y8YvYJkvvg/Following?{get}'
         data = json.loads(requests.get(url, headers=REQUEST_HEADERS).content)
 
