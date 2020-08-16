@@ -2,24 +2,45 @@
 import json
 import requests
 import sys
+import urllib.parse
 
 from config import *
 
 
-def get_followers(user_id: int):
-    cursor = -1
+def get_followers(user_id: str):
+    cursor = None
     followers = []
 
     while True:
-        url = f'https://api.twitter.com/1.1/friends/list.json?user_id={user_id}&cursor={cursor}'
+        variables = {
+            'userId': user_id,
+            'count': 200,
+            'withHighlightedLabel': False,
+            'withTweetQuoteCount': False,
+            'includePromotedContent': False,
+            'withTweetResult': False,
+            'withUserResult': False,
+        }
+
+        if cursor is not None:
+            variables['cursor'] = cursor
+
+        get = urllib.parse.urlencode({'variables': json.dumps(variables)})
+        url = f'https://api.twitter.com/graphql/0LTpnyHIBKX5Y8YvYJkvvg/Following?{get}'
         data = json.loads(requests.get(url, headers=REQUEST_HEADERS).content)
 
         followers.append(data)
 
-        if data['next_cursor'] == 0:
-            break
+        for instruction in data['data']['user']['following_timeline']['timeline']['instructions']:
+            if instruction['type'] == 'TimelineAddEntries':
+                cursor = instruction['entries'][-2]['content']['value']
 
-        cursor = data['next_cursor']
+                if cursor == '0|0':
+                    break
+        else:
+            continue
+
+        break
 
     return followers
 
@@ -38,14 +59,15 @@ if __name__ == '__main__':
     _, screen_name = sys.argv
 
     user = get_user(screen_name)
-    followers = get_followers(user['id'])
-    urls = []
+    followers = get_followers(str(user['id']))
 
     for data in followers:
-        for user in data["users"]:
-            url = f'https://twitter.com/{user["screen_name"]}'
+        for instruction in data['data']['user']['following_timeline']['timeline']['instructions']:
+            if instruction['type'] != 'TimelineAddEntries':
+                continue
 
-            if url not in urls:
-                urls.append(url)
+            for entry in instruction['entries']:
+                if entry['content']['entryType'] != 'TimelineTimelineItem':
+                    continue
 
-    print('\n'.join(urls))
+                print(f'https://twitter.com/{entry["content"]["itemContent"]["user"]["legacy"]["screen_name"]}')
