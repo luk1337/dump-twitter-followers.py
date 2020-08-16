@@ -39,7 +39,13 @@ if __name__ == '__main__':
 
     user = get_user(screen_name)
     followers = get_followers(user['id'])
+    urls = []
 
     for data in followers:
         for user in data["users"]:
-            print(f'https://twitter.com/{user["screen_name"]}')
+            url = f'https://twitter.com/{user["screen_name"]}'
+
+            if url not in urls:
+                urls.append(url)
+
+    print('\n'.join(urls))
