@@ -47,7 +47,7 @@ def get_user(screen_name: str):
     return data
 
 
-if __name__ == '__main__':
+def run():
     if len(sys.argv) != 2:
         sys.exit(f'usage: {sys.argv[0]} [screen_name]')
 
@@ -58,3 +58,7 @@ if __name__ == '__main__':
 
     for entry in followers:
         print(f'https://twitter.com/{entry["content"]["itemContent"]["user"]["legacy"]["screen_name"]}')
+
+
+if __name__ == '__main__':
+    run()
