@@ -41,7 +41,11 @@ def get_followers(user_id: str):
 
 
 def get_user(screen_name: str):
-    url = f'https://api.twitter.com/1.1/users/show.json?screen_name={screen_name}'
+    get = urllib.parse.urlencode({'variables': json.dumps({
+        'screen_name': screen_name,
+        'withHighlightedLabel': False,
+    })})
+    url = f'https://api.twitter.com/graphql/-xfUfZsnR_zqjFd-IfrN5A/UserByScreenName?{get}'
     data = json.loads(requests.get(url, headers=REQUEST_HEADERS).content)
 
     return data
@@ -54,7 +58,7 @@ def run():
     _, screen_name = sys.argv
 
     user = get_user(screen_name)
-    followers = get_followers(str(user['id']))
+    followers = get_followers(user['data']['user']['rest_id'])
 
     for entry in followers:
         print(f'https://twitter.com/{entry["content"]["itemContent"]["user"]["legacy"]["screen_name"]}')
