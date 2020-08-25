@@ -13,7 +13,7 @@ def api_call(endpoint: str, variables: dict):
         api_call.endpoints = get_api_endpoints()
 
     return json.loads(requests.get(
-        url=api_call.endpoints[endpoint]["url"] + '?' + urllib.parse.urlencode({'variables': json.dumps(variables)}),
+        url=api_call.endpoints[endpoint]['url'] + '?' + urllib.parse.urlencode({'variables': json.dumps(variables)}),
         headers=REQUEST_HEADERS).content)
 
 
