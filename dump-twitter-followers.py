@@ -1,13 +1,19 @@
 #!/usr/bin/env python3
 import json
+import re
 import requests
 import sys
 import urllib.parse
 
 from config import *
 
+API_BASE = 'https://api.twitter.com/graphql'
+API_ENDPOINTS = {}
+
 
 def get_followers(user_id: str):
+    global API_ENDPOINTS
+
     cursor = None
     followers = []
 
@@ -22,7 +28,7 @@ def get_followers(user_id: str):
             'withTweetResult': False,
             'withUserResult': False,
         })})
-        url = f'https://api.twitter.com/graphql/0LTpnyHIBKX5Y8YvYJkvvg/Following?{get}'
+        url = f'{API_ENDPOINTS["Following"]["url"]}?{get}'
         data = json.loads(requests.get(url, headers=REQUEST_HEADERS).content)
 
         for instruction in data['data']['user']['following_timeline']['timeline']['instructions']:
@@ -41,14 +47,33 @@ def get_followers(user_id: str):
 
 
 def get_user(screen_name: str):
+    global API_ENDPOINTS
+
     get = urllib.parse.urlencode({'variables': json.dumps({
         'screen_name': screen_name,
         'withHighlightedLabel': False,
     })})
-    url = f'https://api.twitter.com/graphql/-xfUfZsnR_zqjFd-IfrN5A/UserByScreenName?{get}'
+    url = f'{API_ENDPOINTS["UserByScreenName"]["url"]}?{get}'
     data = json.loads(requests.get(url, headers=REQUEST_HEADERS).content)
 
     return data
+
+
+def set_api_endpoints():
+    global API_BASE, API_ENDPOINTS
+
+    m = re.search(r'https://abs.twimg.com/responsive-web/client-web-legacy/main.[0-9a-z]+.js',
+                  requests.get('https://twitter.com').text)
+    m = re.findall(
+        r'e.exports={queryId:"([0-9a-zA-Z_-]+)",operationName:"([0-9a-zA-Z]+)",operationType:"([0-9a-zA-Z]+)"}',
+        requests.get(m.group(0)).text)
+
+    for query_id, operation_name, operation_type in m:
+        API_ENDPOINTS[operation_name] = {
+            'query_id': query_id,
+            'operation_type': operation_type,
+            'url': f'{API_BASE}/{query_id}/{operation_name}'
+        }
 
 
 def run():
@@ -57,6 +82,7 @@ def run():
 
     _, screen_name = sys.argv
 
+    set_api_endpoints()
     user = get_user(screen_name)
     followers = get_followers(user['data']['user']['rest_id'])
 
