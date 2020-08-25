@@ -7,7 +7,6 @@ import urllib.parse
 
 from config import *
 
-API_BASE = 'https://api.twitter.com/graphql'
 API_ENDPOINTS = {}
 
 
@@ -60,7 +59,7 @@ def get_user(screen_name: str):
 
 
 def set_api_endpoints():
-    global API_BASE, API_ENDPOINTS
+    global API_ENDPOINTS
 
     m = re.search(r'https://abs.twimg.com/responsive-web/client-web-legacy/main.[0-9a-z]+.js',
                   requests.get('https://twitter.com').text)
@@ -72,7 +71,7 @@ def set_api_endpoints():
         API_ENDPOINTS[operation_name] = {
             'query_id': query_id,
             'operation_type': operation_type,
-            'url': f'{API_BASE}/{query_id}/{operation_name}'
+            'url': f'https://api.twitter.com/graphql/{query_id}/{operation_name}'
         }
 
 
