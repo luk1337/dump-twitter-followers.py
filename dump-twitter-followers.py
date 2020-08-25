@@ -10,14 +10,20 @@ from config import *
 API_ENDPOINTS = {}
 
 
-def get_followers(user_id: str):
+def api_call(endpoint: str, variables: dict):
     global API_ENDPOINTS
 
+    return json.loads(requests.get(
+        url=API_ENDPOINTS[endpoint]["url"] + '?' + urllib.parse.urlencode({'variables': json.dumps(variables)}),
+        headers=REQUEST_HEADERS).content)
+
+
+def get_followers(user_id: str):
     cursor = None
     followers = []
 
     while True:
-        get = urllib.parse.urlencode({'variables': json.dumps({
+        data = api_call('Following', {
             'userId': user_id,
             'count': 200,
             'cursor': cursor,
@@ -26,9 +32,7 @@ def get_followers(user_id: str):
             'includePromotedContent': False,
             'withTweetResult': False,
             'withUserResult': False,
-        })})
-        url = f'{API_ENDPOINTS["Following"]["url"]}?{get}'
-        data = json.loads(requests.get(url, headers=REQUEST_HEADERS).content)
+        })
 
         for instruction in data['data']['user']['following_timeline']['timeline']['instructions']:
             if instruction['type'] == 'TimelineAddEntries':
@@ -46,14 +50,10 @@ def get_followers(user_id: str):
 
 
 def get_user(screen_name: str):
-    global API_ENDPOINTS
-
-    get = urllib.parse.urlencode({'variables': json.dumps({
+    data = api_call('UserByScreenName', {
         'screen_name': screen_name,
         'withHighlightedLabel': False,
-    })})
-    url = f'{API_ENDPOINTS["UserByScreenName"]["url"]}?{get}'
-    data = json.loads(requests.get(url, headers=REQUEST_HEADERS).content)
+    })
 
     return data
 
