@@ -7,15 +7,33 @@ import urllib.parse
 
 from config import *
 
-API_ENDPOINTS = {}
-
 
 def api_call(endpoint: str, variables: dict):
-    global API_ENDPOINTS
+    if not hasattr(api_call, 'endpoints'):
+        api_call.endpoints = get_api_endpoints()
 
     return json.loads(requests.get(
-        url=API_ENDPOINTS[endpoint]["url"] + '?' + urllib.parse.urlencode({'variables': json.dumps(variables)}),
+        url=api_call.endpoints[endpoint]["url"] + '?' + urllib.parse.urlencode({'variables': json.dumps(variables)}),
         headers=REQUEST_HEADERS).content)
+
+
+def get_api_endpoints():
+    api_endpoints = {}
+
+    m = re.search(r'https://abs.twimg.com/responsive-web/client-web-legacy/main.[0-9a-z]+.js',
+                  requests.get('https://twitter.com').text)
+    m = re.findall(
+        r'e.exports={queryId:"([\w-]+)",operationName:"([\w-]+)",operationType:"([\w-]+)"}',
+        requests.get(m.group(0)).text)
+
+    for query_id, operation_name, operation_type in m:
+        api_endpoints[operation_name] = {
+            'query_id': query_id,
+            'operation_type': operation_type,
+            'url': f'https://api.twitter.com/graphql/{query_id}/{operation_name}'
+        }
+
+    return api_endpoints
 
 
 def get_followers(user_id: str):
@@ -58,30 +76,12 @@ def get_user(screen_name: str):
     return data
 
 
-def set_api_endpoints():
-    global API_ENDPOINTS
-
-    m = re.search(r'https://abs.twimg.com/responsive-web/client-web-legacy/main.[0-9a-z]+.js',
-                  requests.get('https://twitter.com').text)
-    m = re.findall(
-        r'e.exports={queryId:"([\w-]+)",operationName:"([\w-]+)",operationType:"([\w-]+)"}',
-        requests.get(m.group(0)).text)
-
-    for query_id, operation_name, operation_type in m:
-        API_ENDPOINTS[operation_name] = {
-            'query_id': query_id,
-            'operation_type': operation_type,
-            'url': f'https://api.twitter.com/graphql/{query_id}/{operation_name}'
-        }
-
-
 def run():
     if len(sys.argv) != 2:
         sys.exit(f'usage: {sys.argv[0]} [screen_name]')
 
     _, screen_name = sys.argv
 
-    set_api_endpoints()
     user = get_user(screen_name)
     followers = get_followers(user['data']['user']['rest_id'])
 
