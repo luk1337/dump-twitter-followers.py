@@ -64,7 +64,7 @@ def set_api_endpoints():
     m = re.search(r'https://abs.twimg.com/responsive-web/client-web-legacy/main.[0-9a-z]+.js',
                   requests.get('https://twitter.com').text)
     m = re.findall(
-        r'e.exports={queryId:"([0-9a-zA-Z_-]+)",operationName:"([0-9a-zA-Z]+)",operationType:"([0-9a-zA-Z]+)"}',
+        r'e.exports={queryId:"([\w-]+)",operationName:"([\w-]+)",operationType:"([\w-]+)"}',
         requests.get(m.group(0)).text)
 
     for query_id, operation_name, operation_type in m:
