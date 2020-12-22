@@ -20,8 +20,10 @@ def api_call(endpoint: str, variables: dict):
 def get_api_endpoints():
     api_endpoints = {}
 
-    m = re.search(r'https://abs.twimg.com/responsive-web/client-web-legacy/main.[0-9a-z]+.js',
-                  requests.get('https://twitter.com').text)
+    m = re.search(r'https://abs.twimg.com/responsive-web/client-web/main.[0-9a-z]+.js',
+                  requests.get('https://twitter.com', headers={
+                      'user-agent': 'Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
+                  }).text)
     m = re.findall(
         r'e.exports={queryId:"([\w-]+)",operationName:"([\w-]+)",operationType:"([\w-]+)"}',
         requests.get(m.group(0)).text)
