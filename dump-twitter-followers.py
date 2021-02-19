@@ -59,7 +59,7 @@ def get_followers(user_id: str):
                 followers += instruction['entries'][:-2]
                 cursor = instruction['entries'][-2]['content']['value']
 
-                if cursor == '0|0':
+                if cursor.startswith('0|'):
                     break
         else:
             continue
