@@ -79,13 +79,16 @@ def get_user(screen_name: str):
 
 
 def run():
-    if len(sys.argv) != 2:
-        sys.exit(f'usage: {sys.argv[0]} [screen_name]')
+    if len(sys.argv) != 3:
+        sys.exit(f'usage: {sys.argv[0]} [rest_id|screen_name] [value]')
 
-    _, screen_name = sys.argv
+    _, arg, value = sys.argv
 
-    user = get_user(screen_name)
-    followers = get_followers(user['data']['user']['rest_id'])
+    if arg == 'screen_name':
+        user = get_user(value)
+        followers = get_followers(user['data']['user']['rest_id'])
+    elif arg == 'rest_id':
+        followers = get_followers(value)
 
     for entry in followers:
         print(f'https://twitter.com/{entry["content"]["itemContent"]["user"]["legacy"]["screen_name"]}')
