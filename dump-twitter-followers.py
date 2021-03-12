@@ -80,13 +80,16 @@ def get_user(screen_name: str):
 
 def run():
     if len(sys.argv) != 3:
-        sys.exit(f'usage: {sys.argv[0]} [rest_id|screen_name] [value]')
+        sys.exit(f'usage: {sys.argv[0]} [screen_name|print_rest_id|rest_id] [value]')
 
     _, arg, value = sys.argv
 
     if arg == 'screen_name':
         user = get_user(value)
         followers = get_followers(user['data']['user']['rest_id'])
+    elif arg == 'print_rest_id':
+        user = get_user(value)
+        sys.exit(user['data']['user']['rest_id'])
     elif arg == 'rest_id':
         followers = get_followers(value)
 
