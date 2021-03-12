@@ -9,15 +9,22 @@ from config import *
 
 
 def api_call(endpoint: str, variables: dict):
+    return json.loads(requests.post(
+        url=f'https://twitter.com/i/api/{endpoint}',
+        data=variables,
+        headers=REQUEST_HEADERS).content)
+
+
+def ql_api_call(endpoint: str, variables: dict):
     if not hasattr(api_call, 'endpoints'):
-        api_call.endpoints = get_api_endpoints()
+        api_call.endpoints = get_ql_api_endpoints()
 
     return json.loads(requests.get(
         url=api_call.endpoints[endpoint]['url'] + '?' + urllib.parse.urlencode({'variables': json.dumps(variables)}),
         headers=REQUEST_HEADERS).content)
 
 
-def get_api_endpoints():
+def get_ql_api_endpoints():
     api_endpoints = {}
 
     m = re.search(r'https://abs.twimg.com/responsive-web/client-web/main.[0-9a-z]+.js',
@@ -43,7 +50,7 @@ def get_followers(user_id: str):
     followers = []
 
     while True:
-        data = api_call('Following', {
+        data = ql_api_call('Following', {
             'userId': user_id,
             'count': 200,
             'cursor': cursor,
@@ -70,7 +77,7 @@ def get_followers(user_id: str):
 
 
 def get_user(screen_name: str):
-    data = api_call('UserByScreenName', {
+    data = ql_api_call('UserByScreenName', {
         'screen_name': screen_name,
         'withHighlightedLabel': False,
     })
