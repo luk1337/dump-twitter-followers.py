@@ -85,6 +85,23 @@ def get_user(screen_name: str):
     return data
 
 
+def friendships_create(id: str):
+    data = api_call('1.1/friendships/create.json', {
+        'include_profile_interstitial_type': 1,
+        'include_blocking': 1,
+        'include_blocked_by': 1,
+        'include_followed_by': 1,
+        'include_want_retweets': 1,
+        'include_mute_edge': 1,
+        'include_can_dm': 1,
+        'include_can_media_tag': 1,
+        'skip_status': 1,
+        'id': id,
+    })
+
+    return data
+
+
 def run():
     if len(sys.argv) != 3:
         sys.exit(f'usage: {sys.argv[0]} [screen_name|print_rest_id|rest_id] [value]')
