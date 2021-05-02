@@ -58,7 +58,9 @@ def get_followers(user_id: str):
             'withTweetQuoteCount': False,
             'includePromotedContent': False,
             'withTweetResult': False,
-            'withUserResult': False,
+            'withUserResults': False,
+            'withNonLegacyCard': True,
+            'withBirdwatchPivots': False,
         })
 
         for instruction in data['data']['user']['following_timeline']['timeline']['instructions']:
