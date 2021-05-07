@@ -113,10 +113,10 @@ def run():
 
     if arg == 'screen_name':
         user = get_user(value)
-        followers = get_followers(user['data']['user']['rest_id'])
+        followers = get_followers(user['data']['user']['result']['rest_id'])
     elif arg == 'print_rest_id':
         user = get_user(value)
-        sys.exit(user['data']['user']['rest_id'])
+        sys.exit(user['data']['user']['result']['rest_id'])
     elif arg == 'rest_id':
         followers = get_followers(value)
 
