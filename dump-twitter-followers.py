@@ -121,7 +121,9 @@ def run():
         followers = get_followers(value)
 
     for entry in followers:
-        print(f'https://twitter.com/{entry["content"]["itemContent"]["user"]["legacy"]["screen_name"]}')
+        user = entry["content"]["itemContent"]["user"]
+        if 'legacy' in user:
+            print(f'https://twitter.com/{user["legacy"]["screen_name"]}')
 
 
 if __name__ == '__main__':
