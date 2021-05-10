@@ -64,7 +64,7 @@ def get_followers(user_id: str):
             'withBirdwatchPivots': False,
         })
 
-        for instruction in data['data']['user']['following_timeline']['timeline']['instructions']:
+        for instruction in data['data']['user']['result']['timeline']['timeline']['instructions']:
             if instruction['type'] == 'TimelineAddEntries':
                 followers += instruction['entries'][:-2]
                 cursor = instruction['entries'][-2]['content']['value']
