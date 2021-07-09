@@ -60,6 +60,7 @@ def get_followers(user_id: str):
             'withTweetResult': True,
             'withReactions': False,
             'withSuperFollowsTweetFields': False,
+            'withSuperFollowsUserFields': False,
             'withUserResults': False,
             'withNonLegacyCard': True,
             'withBirdwatchPivots': False,
@@ -84,6 +85,7 @@ def get_user(screen_name: str):
     data = ql_api_call('UserByScreenName', {
         'screen_name': screen_name,
         'withHighlightedLabel': False,
+        'withSuperFollowsUserFields': False,
     })
 
     return data
