@@ -54,16 +54,15 @@ def get_followers(user_id: str):
             'userId': user_id,
             'count': 200,
             'cursor': cursor,
-            'withHighlightedLabel': False,
+            'withHighlightedLabel': True,
             'withTweetQuoteCount': False,
             'includePromotedContent': False,
-            'withTweetResult': True,
-            'withReactions': False,
-            'withSuperFollowsTweetFields': False,
             'withSuperFollowsUserFields': False,
-            'withUserResults': False,
-            'withNonLegacyCard': True,
+            'withUserResults': True,
             'withBirdwatchPivots': False,
+            'withReactionsMetadata': False,
+            'withReactionsPerspective': False,
+            'withSuperFollowsTweetFields': False,
         })
 
         for instruction in data['data']['user']['result']['timeline']['timeline']['instructions']:
@@ -124,7 +123,7 @@ def run():
         followers = get_followers(value)
 
     for entry in followers:
-        user = entry["content"]["itemContent"]["user"]
+        user = entry['content']['itemContent']['user_results']['result']
         if 'legacy' in user:
             print(f'https://twitter.com/{user["legacy"]["screen_name"]}')
 
