@@ -45,6 +45,17 @@ def get_ql_api_endpoints():
     return api_endpoints
 
 
+def dict_item_or_fail(d: dict, path: str):
+    try:
+        for key in path.split('.'):
+            d = d[key]
+    except KeyError as e:
+        print(d, sys.stderr)
+        raise e
+
+    return d
+
+
 def get_followers(user_id: str):
     cursor = None
     followers = []
@@ -65,7 +76,7 @@ def get_followers(user_id: str):
             'withSuperFollowsTweetFields': False,
         })
 
-        for instruction in data['data']['user']['result']['timeline']['timeline']['instructions']:
+        for instruction in dict_item_or_fail(data, 'data.user.result.timeline.timeline.instructions'):
             if instruction['type'] == 'TimelineAddEntries':
                 followers += instruction['entries'][:-2]
                 cursor = instruction['entries'][-2]['content']['value']
@@ -115,17 +126,17 @@ def run():
 
     if arg == 'screen_name':
         user = get_user(value)
-        followers = get_followers(user['data']['user']['rest_id'])
+        followers = get_followers(dict_item_or_fail(user, 'data.user.rest_id'))
     elif arg == 'print_rest_id':
         user = get_user(value)
-        sys.exit(user['data']['user']['result']['rest_id'])
+        sys.exit(dict_item_or_fail(user, 'data.user.rest_id'))
     elif arg == 'rest_id':
         followers = get_followers(value)
 
     for entry in followers:
-        user = entry['content']['itemContent']['user_results']['result']
+        user = dict_item_or_fail(entry, 'content.itemContent.user_results.result')
         if 'legacy' in user:
-            print(f'https://twitter.com/{user["legacy"]["screen_name"]}')
+            print(f'https://twitter.com/{dict_item_or_fail(user, "legacy.screen_name")}')
 
 
 if __name__ == '__main__':
