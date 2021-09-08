@@ -77,9 +77,9 @@ def get_followers(user_id: str):
         })
 
         for instruction in dict_item_or_fail(data, 'data', 'user', 'result', 'timeline', 'timeline', 'instructions'):
-            if instruction['type'] == 'TimelineAddEntries':
-                followers += instruction['entries'][:-2]
-                cursor = instruction['entries'][-2]['content']['value']
+            if dict_item_or_fail(instruction, 'type') == 'TimelineAddEntries':
+                followers += dict_item_or_fail(instruction, 'entries', slice(None, -2))
+                cursor = dict_item_or_fail(instruction, 'entries', -2, 'content', 'value')
 
                 if cursor.startswith('0|'):
                     break
