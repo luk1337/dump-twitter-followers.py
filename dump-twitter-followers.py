@@ -50,7 +50,7 @@ def dict_item_or_fail(d: dict, *args):
         for key in args:
             d = d[key]
     except KeyError as e:
-        print(d, sys.stderr)
+        print(d, file=sys.stderr)
         raise e
 
     return d
