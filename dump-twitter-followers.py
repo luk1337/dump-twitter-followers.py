@@ -70,6 +70,7 @@ def get_followers(user_id: str):
             'includePromotedContent': False,
             'withSuperFollowsUserFields': False,
             'withUserResults': True,
+            'withNftAvatar': False,
             'withBirdwatchPivots': False,
             'withReactionsMetadata': False,
             'withReactionsPerspective': False,
@@ -96,6 +97,7 @@ def get_user(screen_name: str):
         'screen_name': screen_name,
         'withHighlightedLabel': False,
         'withSuperFollowsUserFields': False,
+        'withNftAvatar': False,
     })
 
     return data
