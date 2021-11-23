@@ -72,6 +72,7 @@ def get_followers(user_id: str):
             'withUserResults': True,
             'withNftAvatar': False,
             'withBirdwatchPivots': False,
+            'withDownvotePerspective': False,
             'withReactionsMetadata': False,
             'withReactionsPerspective': False,
             'withSuperFollowsTweetFields': False,
