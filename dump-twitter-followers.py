@@ -12,10 +12,10 @@ from config import *
 
 
 def api_call(endpoint: str, variables: dict):
-    return json.loads(requests.post(
+    return requests.post(
         url=f'https://twitter.com/i/api/{endpoint}',
         data=variables,
-        headers=REQUEST_HEADERS).content)
+        headers=REQUEST_HEADERS).json()
 
 
 def ql_api_call(endpoint: str, variables: dict):
@@ -23,9 +23,9 @@ def ql_api_call(endpoint: str, variables: dict):
         api_call.endpoints = get_ql_api_endpoints()
 
     for i in range(5):
-        ret = json.loads(requests.get(
+        ret = requests.get(
             url=f'{api_call.endpoints[endpoint]["url"]}?{urllib.parse.urlencode({"variables": json.dumps(variables)})}',
-            headers=REQUEST_HEADERS).content)
+            headers=REQUEST_HEADERS).json()
 
         with contextlib.redirect_stderr(open(os.devnull, 'w')), contextlib.suppress(KeyError):
             if dict_item_or_fail(ret, 'errors', 0, 'extensions', 'name') == 'TimeoutError':
