@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import contextlib
 import json
+import os
 import re
 import requests
 import sys
@@ -26,8 +27,8 @@ def ql_api_call(endpoint: str, variables: dict):
             url=f'{api_call.endpoints[endpoint]["url"]}?{urllib.parse.urlencode({"variables": json.dumps(variables)})}',
             headers=REQUEST_HEADERS).content)
 
-        with contextlib.suppress(KeyError):
-            if dict_item_or_fail(ret, 'errors', 0, 'extensions', 'name', log=False) == 'TimeoutError':
+        with contextlib.redirect_stderr(open(os.devnull, 'w')), contextlib.suppress(KeyError):
+            if dict_item_or_fail(ret, 'errors', 0, 'extensions', 'name') == 'TimeoutError':
                 time.sleep(5)
                 continue
 
@@ -57,15 +58,14 @@ def get_ql_api_endpoints():
     return api_endpoints
 
 
-def dict_item_or_fail(d: dict, *args, log: bool = True):
+def dict_item_or_fail(d: dict, *args):
     d_backup = d
 
     try:
         for key in args:
             d = d[key]
     except KeyError as e:
-        if log:
-            print(d or d_backup, file=sys.stderr)
+        print(d or d_backup, file=sys.stderr)
         raise e
 
     return d
