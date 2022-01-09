@@ -46,11 +46,13 @@ def get_ql_api_endpoints():
 
 
 def dict_item_or_fail(d: dict, *args):
+    d_backup = d
+
     try:
         for key in args:
             d = d[key]
     except KeyError as e:
-        print(d, file=sys.stderr)
+        print(d or d_backup, file=sys.stderr)
         raise e
 
     return d
