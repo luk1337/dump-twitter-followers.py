@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
+import contextlib
 import json
 import re
 import requests
 import sys
+import time
 import urllib.parse
 
 from config import *
@@ -19,9 +21,20 @@ def ql_api_call(endpoint: str, variables: dict):
     if not hasattr(api_call, 'endpoints'):
         api_call.endpoints = get_ql_api_endpoints()
 
-    return json.loads(requests.get(
-        url=api_call.endpoints[endpoint]['url'] + '?' + urllib.parse.urlencode({'variables': json.dumps(variables)}),
-        headers=REQUEST_HEADERS).content)
+    for i in range(5):
+        ret = json.loads(requests.get(
+            url=api_call.endpoints[endpoint]['url'] + '?' + urllib.parse.urlencode(
+                {'variables': json.dumps(variables)}),
+            headers=REQUEST_HEADERS).content)
+
+        with contextlib.suppress(KeyError):
+            if dict_item_or_fail(ret, 'errors', 0, 'extensions', 'name', log=False) == 'TimeoutError':
+                time.sleep(5)
+                continue
+
+        break
+
+    return ret
 
 
 def get_ql_api_endpoints():
@@ -45,14 +58,15 @@ def get_ql_api_endpoints():
     return api_endpoints
 
 
-def dict_item_or_fail(d: dict, *args):
+def dict_item_or_fail(d: dict, *args, log: bool = True):
     d_backup = d
 
     try:
         for key in args:
             d = d[key]
     except KeyError as e:
-        print(d or d_backup, file=sys.stderr)
+        if log:
+            print(d or d_backup, file=sys.stderr)
         raise e
 
     return d
