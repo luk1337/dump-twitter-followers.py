@@ -3,10 +3,10 @@ import contextlib
 import json
 import os
 import re
-import requests
 import sys
 import time
-import urllib.parse
+
+import requests
 
 from config import *
 
@@ -23,9 +23,9 @@ def ql_api_call(endpoint: str, variables: dict):
         api_call.endpoints = get_ql_api_endpoints()
 
     for i in range(5):
-        ret = requests.get(
-            url=f'{api_call.endpoints[endpoint]["url"]}?{urllib.parse.urlencode({"variables": json.dumps(variables)})}',
-            headers=REQUEST_HEADERS).json()
+        ret = requests.get(url=api_call.endpoints[endpoint]["url"],
+                           params={'variables': json.dumps(variables)},
+                           headers=REQUEST_HEADERS).json()
 
         with contextlib.redirect_stderr(open(os.devnull, 'w')), contextlib.suppress(KeyError):
             if dict_item_or_fail(ret, 'errors', 0, 'extensions', 'name') == 'TimeoutError':
