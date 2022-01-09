@@ -110,7 +110,7 @@ def get_followers(user_id: str):
 
 
 def get_user(screen_name: str):
-    data = ql_api_call('UserByScreenNameWithoutResults', {
+    data = ql_api_call('UserByScreenName', {
         'screen_name': screen_name,
         'withHighlightedLabel': False,
         'withSuperFollowsUserFields': False,
@@ -145,10 +145,10 @@ def run():
 
     if arg == 'screen_name':
         user = get_user(value)
-        followers = get_followers(dict_item_or_fail(user, 'data', 'user', 'rest_id'))
+        followers = get_followers(dict_item_or_fail(user, 'data', 'user', 'result', 'rest_id'))
     elif arg == 'print_rest_id':
         user = get_user(value)
-        sys.exit(dict_item_or_fail(user, 'data', 'user', 'rest_id'))
+        sys.exit(dict_item_or_fail(user, 'data', 'user', 'result', 'rest_id'))
     elif arg == 'rest_id':
         followers = get_followers(value)
 
