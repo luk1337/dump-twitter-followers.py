@@ -42,7 +42,7 @@ def get_ql_api_endpoints():
 
     m = re.search(r'https://abs.twimg.com/responsive-web/client-web/main.[0-9a-z]+.js',
                   requests.get('https://twitter.com', headers={
-                      'user-agent': 'Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
+                      'user-agent': 'Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.11 Safari/537.36',
                   }).text)
     m = re.findall(
         r'e.exports={queryId:"([\w-]+)",operationName:"([\w-]+)",operationType:"([\w-]+)",metadata:',
