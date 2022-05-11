@@ -18,13 +18,13 @@ def api_call(endpoint: str, variables: dict):
         headers=REQUEST_HEADERS).json()
 
 
-def ql_api_call(endpoint: str, variables: dict):
+def ql_api_call(endpoint: str, params: dict):
     if not hasattr(api_call, 'endpoints'):
         api_call.endpoints = get_ql_api_endpoints()
 
     for i in range(5):
         ret = requests.get(url=api_call.endpoints[endpoint]["url"],
-                           params={'variables': json.dumps(variables)},
+                           params={k: json.dumps(v) for k, v in params.items()},
                            headers=REQUEST_HEADERS).json()
 
         with contextlib.redirect_stderr(open(os.devnull, 'w')), contextlib.suppress(KeyError):
@@ -77,18 +77,24 @@ def get_followers(user_id: str):
 
     while True:
         data = ql_api_call('Following', {
-            'userId': user_id,
-            'count': 200,
-            'cursor': cursor,
-            "withTweetQuoteCount": False,
-            "includePromotedContent": False,
-            "withSuperFollowsUserFields": True,
-            "withBirdwatchPivots": False,
-            "withDownvotePerspective": False,
-            "withReactionsMetadata": False,
-            "withReactionsPerspective": False,
-            "withSuperFollowsTweetFields": True,
-            "__fs_dont_mention_me_view_api_enabled": False,
+            'variables': {
+                'userId': user_id,
+                'count': 200,
+                'cursor': cursor,
+                'includePromotedContent': False,
+                'withSuperFollowsUserFields': True,
+                'withDownvotePerspective': False,
+                'withReactionsMetadata': False,
+                'withReactionsPerspective': False,
+                'withSuperFollowsTweetFields': True,
+            },
+            'features': {
+                'responsive_web_like_by_author_enabled': False,
+                'dont_mention_me_view_api_enabled': True,
+                'interactive_text_enabled': True,
+                'responsive_web_uc_gql_enabled': False,
+                'responsive_web_edit_tweet_api_enabled': False,
+            },
         })
 
         for instruction in dict_item_or_fail(data, 'data', 'user', 'result', 'timeline', 'timeline', 'instructions'):
@@ -108,10 +114,12 @@ def get_followers(user_id: str):
 
 def get_user(screen_name: str):
     data = ql_api_call('UserByScreenName', {
-        'screen_name': screen_name,
-        'withHighlightedLabel': False,
-        'withSuperFollowsUserFields': False,
-        'withNftAvatar': False,
+        'variables': {
+            'screen_name': screen_name,
+            'withHighlightedLabel': False,
+            'withSuperFollowsUserFields': False,
+            'withNftAvatar': False,
+        },
     })
 
     return data
