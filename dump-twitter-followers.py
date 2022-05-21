@@ -89,10 +89,10 @@ def get_followers(user_id: str):
                 'withSuperFollowsTweetFields': True,
             },
             'features': {
-                'responsive_web_like_by_author_enabled': False,
                 'dont_mention_me_view_api_enabled': True,
                 'interactive_text_enabled': True,
                 'responsive_web_uc_gql_enabled': False,
+                'vibe_tweet_context_enabled': False,
                 'responsive_web_edit_tweet_api_enabled': False,
             },
         })
