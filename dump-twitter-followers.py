@@ -159,9 +159,9 @@ def run():
         followers = get_followers(value)
 
     for entry in followers:
-        user = dict_item_or_fail(entry, 'content', 'itemContent', 'user_results', 'result')
-        if 'legacy' in user:
-            print(f'https://twitter.com/{dict_item_or_fail(user, "legacy", "screen_name")}')
+        user = dict_item_or_fail(entry, 'content', 'itemContent', 'user_results')
+        if 'result' in user and 'legacy' in user['result']:
+            print(f'https://twitter.com/{dict_item_or_fail(user, "result", "legacy", "screen_name")}')
 
 
 if __name__ == '__main__':
