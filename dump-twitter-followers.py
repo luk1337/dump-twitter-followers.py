@@ -95,6 +95,7 @@ def get_followers(user_id: str):
                 'vibe_tweet_context_enabled': False,
                 'responsive_web_edit_tweet_api_enabled': False,
                 'standardized_nudges_for_misinfo_nudges_enabled': False,
+                'responsive_web_enhance_cards_enabled': False,
             },
         })
 
