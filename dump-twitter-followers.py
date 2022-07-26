@@ -92,9 +92,10 @@ def get_followers(user_id: str):
                 'dont_mention_me_view_api_enabled': True,
                 'interactive_text_enabled': True,
                 'responsive_web_uc_gql_enabled': False,
-                'vibe_api_enabled': False,
+                'vibe_api_enabled': True,
                 'responsive_web_edit_tweet_api_enabled': False,
-                'standardized_nudges_misinfo': False,
+                'standardized_nudges_misinfo': True,
+                'tweet_with_visibility_results_prefer_gql_limited_actions_policy_enabled': False,
                 'responsive_web_enhance_cards_enabled': False,
             },
         })
