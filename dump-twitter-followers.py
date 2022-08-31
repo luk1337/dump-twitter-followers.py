@@ -72,6 +72,12 @@ def dict_item_or_fail(d: dict, *args):
 
 
 def get_followers(user_id: str):
+    if not hasattr(get_followers, 'features'):
+        message = dict_item_or_fail(ql_api_call('Following', {}), 'errors', 0, 'message')
+        prefix = "The following features cannot be null: "
+        assert message.startswith(prefix)
+        get_followers.features = {key: False for key in message[len(prefix):].split(", ")}
+
     cursor = None
     followers = []
 
@@ -88,18 +94,7 @@ def get_followers(user_id: str):
                 'withReactionsPerspective': False,
                 'withSuperFollowsTweetFields': True,
             },
-            'features': {
-                'unified_cards_follow_card_query_enabled': False,
-                'dont_mention_me_view_api_enabled': True,
-                'responsive_web_uc_gql_enabled': True,
-                'vibe_api_enabled': True,
-                'responsive_web_edit_tweet_api_enabled': True,
-                'standardized_nudges_misinfo': True,
-                'tweet_with_visibility_results_prefer_gql_limited_actions_policy_enabled': False,
-                'interactive_text_enabled': True,
-                'responsive_web_text_conversations_enabled': False,
-                'responsive_web_enhance_cards_enabled': True,
-            },
+            'features': get_followers.features,
         })
 
         for instruction in dict_item_or_fail(data, 'data', 'user', 'result', 'timeline', 'timeline', 'instructions'):
