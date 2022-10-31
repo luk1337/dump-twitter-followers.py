@@ -113,6 +113,12 @@ def get_followers(user_id: str):
 
 
 def get_user(screen_name: str):
+    if not hasattr(get_user, 'features'):
+        message = dict_item_or_fail(ql_api_call('UserByScreenName', {}), 'errors', 0, 'message')
+        prefix = "The following features cannot be null: "
+        assert message.startswith(prefix)
+        get_user.features = {key: False for key in message[len(prefix):].split(", ")}
+
     data = ql_api_call('UserByScreenName', {
         'variables': {
             'screen_name': screen_name,
@@ -120,6 +126,7 @@ def get_user(screen_name: str):
             'withSuperFollowsUserFields': False,
             'withNftAvatar': False,
         },
+        'features': get_user.features,
     })
 
     return data
