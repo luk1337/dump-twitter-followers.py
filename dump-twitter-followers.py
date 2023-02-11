@@ -40,13 +40,13 @@ def ql_api_call(endpoint: str, params: dict):
 def get_ql_api_endpoints():
     api_endpoints = {}
 
-    m = re.search(r'https://abs.twimg.com/responsive-web/client-web(-legacy)?/main.[0-9a-z]+.js',
+    m = re.search(r'api:"([0-9a-z]+)"',
                   requests.get('https://twitter.com', headers={
                       'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/190.0.0.0 Safari/537.36',
                   }).text)
     m = re.findall(
         r'e.exports={queryId:"([\w-]+)",operationName:"([\w-]+)",operationType:"([\w-]+)",metadata:',
-        requests.get(m.group(0)).text)
+        requests.get(f'https://abs.twimg.com/responsive-web/client-web/api.{m.group(1)}a.js').text)
 
     for query_id, operation_name, operation_type in m:
         api_endpoints[operation_name] = {
