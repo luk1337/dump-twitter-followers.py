@@ -13,7 +13,7 @@ from config import *
 
 def api_call(endpoint: str, variables: dict):
     return requests.post(
-        url=f'https://twitter.com/i/api/{endpoint}',
+        url=f'https://x.com/i/api/{endpoint}',
         data=variables,
         headers=REQUEST_HEADERS).json()
 
@@ -41,7 +41,7 @@ def get_ql_api_endpoints():
     api_endpoints = {}
 
     m = re.search(r'(https://abs.twimg.com/responsive-web/client-web/main.[0-9a-z]+.js)',
-                  requests.get('https://twitter.com/?mx=1', headers={
+                  requests.get('https://x.com/?mx=1', headers={
                       'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/190.0.0.0 Safari/537.36',
                   }).text)
 
@@ -53,7 +53,7 @@ def get_ql_api_endpoints():
         api_endpoints[operation_name] = {
             'query_id': query_id,
             'operation_type': operation_type,
-            'url': f'https://api.twitter.com/graphql/{query_id}/{operation_name}'
+            'url': f'https://api.x.com/graphql/{query_id}/{operation_name}'
         }
 
     return api_endpoints
@@ -167,8 +167,8 @@ def run():
 
     for entry in followers:
         user = dict_item_or_fail(entry, 'content', 'itemContent', 'user_results')
-        if 'result' in user and 'legacy' in user['result']:
-            print(f'https://twitter.com/{dict_item_or_fail(user, "result", "legacy", "screen_name")}')
+        if 'result' in user and 'core' in user['result']:
+            print(f'https://twitter.com/{dict_item_or_fail(user, "result", "core", "screen_name")}')
 
 
 if __name__ == '__main__':
