@@ -75,7 +75,7 @@ def dict_item_or_fail(d: dict, *args):
 def get_followers(user_id: str):
     if not hasattr(get_followers, 'features'):
         message = dict_item_or_fail(ql_api_call('Following', {}), 'errors', 0, 'message')
-        prefix = "The following features cannot be null: "
+        prefix = "must be defined"
         assert message.startswith(prefix)
         get_followers.features = {key: False for key in message[len(prefix):].split(", ")}
 
@@ -116,7 +116,7 @@ def get_followers(user_id: str):
 def get_user(screen_name: str):
     if not hasattr(get_user, 'features'):
         message = dict_item_or_fail(ql_api_call('UserByScreenName', {}), 'errors', 0, 'message')
-        prefix = "The following features cannot be null: "
+        prefix = "must be defined"
         assert message.startswith(prefix)
         get_user.features = {key: False for key in message[len(prefix):].split(", ")}
 
